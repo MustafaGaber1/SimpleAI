@@ -71,7 +71,7 @@ const handleSubmit = async (e) => {
   loader(messageDiv);
 
   // Use the backend URL here (from environment variable)
-  const response = await fetch(`${backendUrl}/api/endpoint`, {
+  const response = await fetch(`${backendUrl}/`, {
     // Modify the API endpoint if needed
     method: "POST",
     headers: {
