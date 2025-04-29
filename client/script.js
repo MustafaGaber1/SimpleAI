@@ -72,14 +72,11 @@ const handleSubmit = async (e) => {
 
   // Use the backend URL here (from environment variable)
   const response = await fetch(`${backendUrl}/`, {
-    // Modify the API endpoint if needed
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      prompt: data.get("prompt"),
-    }),
+    body: JSON.stringify({ prompt: data.get("prompt") }),
   });
 
   clearInterval(loadInterval);
