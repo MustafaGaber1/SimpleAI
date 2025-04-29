@@ -5,6 +5,8 @@ import { OpenAI } from "openai";
 
 dotenv.config();
 
+const PORT = process.env.PORT || 5000;
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -40,6 +42,6 @@ app.post("/", async (req, res) => {
   }
 });
 
-app.listen(5000, () =>
-  console.log("Server is running on port http://localhost:5000")
-);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server is running on port http://0.0.0.0:${PORT}`);
+});

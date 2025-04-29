@@ -1,6 +1,9 @@
 import bot from "./assets/bot.svg";
 import user from "./assets/user.svg";
 
+// Access the backend URL from the environment variables
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
 const form = document.querySelector("form");
 const chatContainer = document.querySelector("#chat_container");
 
@@ -39,34 +42,37 @@ function generateUniqueId() {
 
 function chatStripe(isAi, value, uniqueId) {
   return `
-      <div class="wrapper ${isAi && "ai"}">
-          <div class="chat">
-              <div class="profile">
-                  <img 
-                    src=${isAi ? bot : user} 
-                    alt="${isAi ? "bot" : "user"}" 
-                  />
-              </div>
-              <div class="message" id=${uniqueId}>${value}</div>
-          </div>
-      </div>
+    <div class="wrapper ${isAi && "ai"}">
+        <div class="chat">
+            <div class="profile">
+                <img 
+                  src=${isAi ? bot : user} 
+                  alt="${isAi ? "bot" : "user"}" 
+                />
+            </div>
+            <div class="message" id=${uniqueId}>${value}</div>
+        </div>
+    </div>
   `;
 }
 
 const handleSubmit = async (e) => {
   e.preventDefault();
   const data = new FormData(form);
-  //user's chatstripe
+  // user's chatstripe
   chatContainer.innerHTML += chatStripe(false, data.get("prompt"));
 
   form.reset();
-  //bot's chatstripe
+  // bot's chatstripe
   const uniqueId = generateUniqueId();
   chatContainer.innerHTML += chatStripe(true, " ", uniqueId);
   chatContainer.scrollTop = chatContainer.scrollHeight;
   const messageDiv = document.getElementById(uniqueId);
   loader(messageDiv);
-  const response = await fetch("http://localhost:5000", {
+
+  // Use the backend URL here (from environment variable)
+  const response = await fetch(`${backendUrl}/api/endpoint`, {
+    // Modify the API endpoint if needed
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -75,8 +81,10 @@ const handleSubmit = async (e) => {
       prompt: data.get("prompt"),
     }),
   });
+
   clearInterval(loadInterval);
   messageDiv.innerHTML = "";
+
   if (response.ok) {
     const data = await response.json();
     const parsedData = data.bot.trim();
@@ -87,6 +95,7 @@ const handleSubmit = async (e) => {
     alert(err);
   }
 };
+
 form.addEventListener("submit", handleSubmit);
 form.addEventListener("keyup", (e) => {
   if (e.key === "Enter") {
